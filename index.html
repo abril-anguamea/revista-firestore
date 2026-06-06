@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Reportes de Accidentes - Huatabampo</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f0f0f0; }
+    .reporte { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .reporte h3 { margin: 0 0 10px 0; color: #e63946; }
+    .dato { margin: 5px 0; }
+    .boton { background: #e63946; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 5px 0 0; }
+  </style>
+</head>
+<body>
+  <h1>Reportes de Accidentes de Huatabampo</h1>
+  <a href="agregar.html" class="boton">Agregar Reporte de Accidente</a>
+  <div id="lista-reportes"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAL7n_6pLRoOaKF94aFIREu9CBTw0HcYOw",
+      authDomain: "revista-motos.firebaseapp.com",
+      projectId: "revista-motos",
+      storageBucket: "revista-motos.firebasestorage.app",
+      messagingSenderId: "554552666157",
+      appId: "1:554552666157:web:5ca3ad332829931436f0a4",
+      measurementId: "G-P0K13K3C8R"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function cargarReportes() {
+      const querySnapshot = await getDocs(collection(db, "Reportes"));
+      const lista = document.getElementById("lista-reportes");
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        const fechaReg = data.Fecha_Registro.toDate().toLocaleDateString();
+        
+        lista.innerHTML += `
+          <div class="reporte">
+            <h3>Reporte de Accidente</h3>
+            <div class="dato"><strong>Edad:</strong> ${data.Edad}</div>
+            <div class="dato"><strong>Usa casco:</strong> ${data.Usa_Casco}</div>
+            <div class="dato"><strong>Exceso de velocidad:</strong> ${data.Exceso_Velocidad}</div>
+            <div class="dato"><strong>Tipo de incidente:</strong> ${data.Tipo_Incidente}</div>
+            <div class="dato"><strong>Lesiones:</strong> ${data.Lesiones}</div>
+            <div class="dato"><strong>Ubicación:</strong> ${data.Ubicacion}</div>
+            <div class="dato"><strong>Fecha del accidente:</strong> ${data.Fecha_Accidente}</div>
+            <div class="dato"><strong>Fecha de registro:</strong> ${fechaReg}</div>
+            ${data.Link ? `<a href="${data.Link}" target="_blank" class="boton">Ver evidencia</a>` : ''}
+          </div>
+        `;
+      });
+    }
+
+    cargarReportes();
+  </script>
+</body>
+</html>
