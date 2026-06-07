@@ -1,76 +1,62 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Reportes de Accidentes - Huatabampo</title>
-  <style>
-    body { font-family: Arial; padding: 20px; background: #f0f0f0; }
-    .reporte { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    .reporte h3 { margin: 0 0 10px 0; color: #e63946; }
-    .dato { margin: 5px 0; }
-    .boton { background: #e63946; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 10px 5px 0 0; }
-  </style>
+    <title>Revista Motos</title>
+    <meta charset="UTF-8">
 </head>
 <body>
-  <h1>Reportes de Accidentes de Huatabampo</h1>
-  <a href="agregar.html" class="boton">Agregar Reporte de Accidente</a>
-  <div id="lista-reportes"></div>
+    <h1>Reportes de Accidentes</h1>
+    <div id="lista-reportes"></div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDmgRwZptdOxfXcik2uFdTWDU5vL6bmEDk",
-  authDomain: "revista-motos-bb922.firebaseapp.com",
-  projectId: "revista-motos-bb922",
-  storageBucket: "revista-motos-bb922.firebasestorage.app",
-  messagingSenderId: "335583967623",
-  appId: "1:335583967623:web:20d52c49414bc834bcbb22",
-  measurementId: "G-RLXLJM42WR"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    async function cargarReportes() {
-      const querySnapshot = await getDocs(collection(db, "Reportes"));
-      const lista = document.getElementById("lista-reportes");
-      
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        const fechaReg = data.Fecha_Registro.toDate().toLocaleDateString();
+    <!-- Firebase compat - ESTE SÍ JALA EN GITHUB -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // TU CONFIGURACIÓN YA PUESTA
+        const firebaseConfig = {
+            apiKey: "AIzaSyDmgRwZptdOxfXcik2uFdTWDU5vL6bmEDk",
+            authDomain: "revista-motos-bb922.firebaseapp.com",
+            projectId: "revista-motos-bb922",
+            storageBucket: "revista-motos-bb922.firebasestorage.app",
+            messagingSenderId: "335583967623",
+            appId: "1:335583967623:web:20d52c49414bc834bcbb22",
+            measurementId: "G-RLXLJM42WR"
+        };
         
-        lista.innerHTML += `
-          <div class="reporte">
-            <h3>Reporte de Accidente</h3>
-            <div class="dato"><strong>Edad:</strong> ${data.Edad}</div>
-            <div class="dato"><strong>Usa casco:</strong> ${data.Usa_Casco}</div>
-            <div class="dato"><strong>Exceso de velocidad:</strong> ${data.Exceso_Velocidad}</div>
-            <div class="dato"><strong>Tipo de incidente:</strong> ${data.Tipo_Incidente}</div>
-            <div class="dato"><strong>Lesiones:</strong> ${data.Lesiones}</div>
-            <div class="dato"><strong>Ubicación:</strong> ${data.Ubicacion}</div>
-            <div class="dato"><strong>Fecha del accidente:</strong> ${data.Fecha_Accidente}</div>
-            <div class="dato"><strong>Fecha de registro:</strong> ${fechaReg}</div>
-            ${data.Link ? `<a href="${data.Link}" target="_blank" class="boton">Ver evidencia</a>` : ''}
-          </div>
-        `;
-      });
-    }
+        // INICIA FIREBASE
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-    cargarReportes();
-  </script>
+        // CARGA LOS REPORTES
+        async function cargarReportes() {
+            const querySnapshot = await db.collection("Reportes").get();
+            const lista = document.getElementById("lista-reportes");
+            
+            lista.innerHTML = '';
+
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const fechaReg = data.Fecha_Registro.toDate().toLocaleDateString();
+                
+                lista.innerHTML += `
+                    <div class="reporte">
+                        <h3>Reporte de Accidente</h3>
+                        <div><strong>Edad:</strong> ${data.Edad}</div>
+                        <div><strong>Usa casco:</strong> ${data.Usa_Casco}</div>
+                        <div><strong>Exceso de velocidad:</strong> ${data.Exceso_Velocidad}</div>
+                        <div><strong>Tipo:</strong> ${data.Tipo_Incidente}</div>
+                        <div><strong>Lesiones:</strong> ${data.Lesiones}</div>
+                        <div><strong>Ubicación:</strong> ${data.Ubicacion}</div>
+                        <div><strong>Fecha accidente:</strong> ${data.Fecha_Accidente}</div>
+                        <div><strong>Fecha registro:</strong> ${fechaReg}</div>
+                        ${data.Link ? `<a href="${data.Link}" target="_blank">Ver evidencia</a>` : ''}
+                    </div><hr>
+                `;
+            });
+        }
+
+        cargarReportes();
+    </script>
 </body>
 </html>
