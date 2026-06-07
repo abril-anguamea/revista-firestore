@@ -8,7 +8,6 @@
     <h1>Reportes de Accidentes</h1>
     <div id="lista-reportes"></div>
 
-    <!-- Firebase compat - ESTE SÍ JALA EN GITHUB -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     
@@ -24,36 +23,47 @@
             measurementId: "G-RLXLJM42WR"
         };
         
-        // INICIA FIREBASE
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // CARGA LOS REPORTES
         async function cargarReportes() {
-            const querySnapshot = await db.collection("Reportes").get();
-            const lista = document.getElementById("lista-reportes");
-            
-            lista.innerHTML = '';
-
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                const fechaReg = data.Fecha_Registro.toDate().toLocaleDateString();
+            try {
+                const querySnapshot = await db.collection("Reportes").get();
+                const lista = document.getElementById("lista-reportes");
                 
-                lista.innerHTML += `
-                    <div class="reporte">
-                        <h3>Reporte de Accidente</h3>
-                        <div><strong>Edad:</strong> ${data.Edad}</div>
-                        <div><strong>Usa casco:</strong> ${data.Usa_Casco}</div>
-                        <div><strong>Exceso de velocidad:</strong> ${data.Exceso_Velocidad}</div>
-                        <div><strong>Tipo:</strong> ${data.Tipo_Incidente}</div>
-                        <div><strong>Lesiones:</strong> ${data.Lesiones}</div>
-                        <div><strong>Ubicación:</strong> ${data.Ubicacion}</div>
-                        <div><strong>Fecha accidente:</strong> ${data.Fecha_Accidente}</div>
-                        <div><strong>Fecha registro:</strong> ${fechaReg}</div>
-                        ${data.Link ? `<a href="${data.Link}" target="_blank">Ver evidencia</a>` : ''}
-                    </div><hr>
-                `;
-            });
+                if (querySnapshot.empty) {
+                    lista.innerHTML = "No hay reportes todavía";
+                    return;
+                }
+
+                lista.innerHTML = '';
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const fechaReg = data.Fecha_Registro.toDate().toLocaleDateString();
+                    
+                    lista.innerHTML += `
+                        <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+                            <h3>Reporte</h3>
+                            <p><strong>Edad:</strong> ${data.Edad}</p>
+                            <p><strong>Usa casco:</strong> ${data.Usa_Casco}</p>
+                            <p><strong>Exceso de velocidad:</strong> ${data.Exceso_Velocidad}</p>
+                            <p><strong>Tipo:</strong> ${data.Tipo_Incidente}</p>
+                            <p><strong>Lesiones:</strong> ${data.Lesiones}</p>
+                            <p><strong>Ubicación:</strong> ${data.Ubicacion}</p>
+                            <p><strong>Fecha accidente:</strong> ${data.Fecha_Accidente}</p>
+                            <p><strong>Fecha registro:</strong> ${fechaReg}</p>
+                            ${data.Link ? `<a href="${data.Link}" target="_blank">Ver evidencia</a>` : ''}
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                document.getElementById("lista-reportes").innerHTML = 
+                `<div style="color:red; padding:20px;">
+                    <h3>ERROR:</h3>
+                    <p>${error.message}</p>
+                </div>`;
+                console.log("Error completo:", error);
+            }
         }
 
         cargarReportes();
