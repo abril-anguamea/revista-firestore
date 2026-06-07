@@ -20,15 +20,27 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAL7n_6pLRoOaKF94aFIREu9CBTw0HcYOw",
-      authDomain: "revista-motos.firebaseapp.com",
-      projectId: "revista-motos",
-      storageBucket: "revista-motos.firebasestorage.app",
-      messagingSenderId: "554552666157",
-      appId: "1:554552666157:web:5ca3ad332829931436f0a4",
-      measurementId: "G-P0K13K3C8R"
-    };
+  // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDmgRwZptdOxfXcik2uFdTWDU5vL6bmEDk",
+  authDomain: "revista-motos-bb922.firebaseapp.com",
+  projectId: "revista-motos-bb922",
+  storageBucket: "revista-motos-bb922.firebasestorage.app",
+  messagingSenderId: "335583967623",
+  appId: "1:335583967623:web:20d52c49414bc834bcbb22",
+  measurementId: "G-RLXLJM42WR"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
